@@ -2,13 +2,13 @@ import * as React from 'react'
 import { TEvergreenEditableFormContent, TEvergreenEditableOnSave, TEvergreenEditableOnCancel, TEvergreenEditableContent, TReactEditableBuilder, TEditableProps } from '../types/types';
 import { Formik, FormikConfig, FormikProps } from 'formik';
 
-const ReactEditableBuilder: TReactEditableBuilder = (renderers) => {
+const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) => {
   const PrivateContent: React.FC<{
     renderContent: TEvergreenEditableContent, onEdit: Function
   }> = p => {
     return React.useMemo(() => (
       <React.Fragment>
-        {renderers.renderContentWrapper(p.renderContent())}
+        {p.renderContent()}
         {renderers.renderEditButton(p.onEdit)}
       </React.Fragment>
     ), [ p.renderContent, p.onEdit ])
@@ -37,9 +37,7 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers) => {
       </div>
     ), [ p.renderContent, p.onCancel ])
   
-    return React.useMemo(() => renderers.renderFormWrapper(
-      <Formik {...formikProps}>{renderForm}</Formik>
-    ), [ formikProps, renderForm ])
+    return React.useMemo(() => <Formik {...formikProps}>{renderForm}</Formik>, [ formikProps, renderForm ])
   }
 
   return (p: TEditableProps) => {
@@ -67,12 +65,23 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers) => {
       }
     }, [ p.onSave ])
   
-    return (isEditing
-      ? <PrivateFormContent
-          renderContent={p.renderFormContent} onSave={onSave} onCancel={onCancel}
-          formInitialValues={p.formInitialValues} formValidationSchema={p.formValidationSchema}
-        />
-      : <PrivateContent renderContent={p.renderContent} onEdit={onEdit} />
+    return (
+      <React.Fragment>
+        {(isEditing)
+          ? renderers.renderFormWrapper(
+            true,
+            <PrivateFormContent
+              renderContent={p.renderFormContent} onSave={onSave} onCancel={onCancel}
+              formInitialValues={p.formInitialValues} formValidationSchema={p.formValidationSchema}
+            />
+          )
+          : renderers.renderFormWrapper(false)
+        }
+
+        {!(options.toHideContentOnEdit && isEditing) && renderers.renderContentWrapper(
+          <PrivateContent renderContent={p.renderContent} onEdit={onEdit} />
+        )}
+      </React.Fragment>
     )
   }
 }

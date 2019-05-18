@@ -1,1 +1,1 @@
-export { TEditableProps, TReactEditableBuilder } from './types'
+export { TEditableProps, TReactEditableBuilder } from '../types/types'

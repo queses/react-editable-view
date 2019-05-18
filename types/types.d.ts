@@ -16,7 +16,10 @@ export type TEditableProps <V extends object = any> = {
   formValidationSchema?: Yup.ObjectSchema<V>
 }
 
-export type TReactEditableBuilder <V = any> = (renderers: TReactEditableBuilderComponents) => React.FC<TEditableProps>
+export type TReactEditableBuilder <V = any> = (
+  renderers: TReactEditableBuilderComponents,
+  options?: TReactEditableBuilderOptions
+) => React.FC<TEditableProps>
 
 export type TReactEditableBuilderComponents = {
   renderContentWrapper: TReactEditableRenderContentWrapper
@@ -25,7 +28,11 @@ export type TReactEditableBuilderComponents = {
   renderFormWrapper: TReactEditableRenderFormWrapper
 }
 
+export type TReactEditableBuilderOptions = {
+  toHideContentOnEdit?: boolean
+}
+
 export type TReactEditableRenderEditButton = (onEdit: Function) => JSX.Element
 export type TReactEditableRenderFormButtons <V = any> = (f: FormikProps<V>, onCancel: TEvergreenEditableOnCancel) => JSX.Element
-export type TReactEditableRenderFormWrapper = (children: JSX.Element) => JSX.Element
+export type TReactEditableRenderFormWrapper = (toShow: boolean, children?: JSX.Element) => JSX.Element
 export type TReactEditableRenderContentWrapper = (children: JSX.Element) => JSX.Element
