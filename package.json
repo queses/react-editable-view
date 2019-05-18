@@ -1,6 +1,6 @@
 {
   "name": "react-editable-view",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index",
   "author": "Max Kobozev <quesesr@gmail.com>",
   "license": "MIT",
