@@ -1,10 +1,19 @@
 {
   "name": "react-editable-view",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "main": "dist/index",
   "author": "Max Kobozev <quesesr@gmail.com>",
   "license": "MIT",
   "repository": "queses/react-editable-view",
+  "keywords": [
+    "react",
+    "editable",
+    "field",
+    "form",
+    "formik",
+    "writable",
+    "changeable"
+  ],
   "scripts": {
     "build": "npm-run-all clear tsc minify",
     "tsc": "tsc",
