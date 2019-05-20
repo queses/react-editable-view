@@ -16,7 +16,7 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
 
   const PrivateFormContent: React.FC<{
     renderContent: TReactEditableFieldFormContent, onSave: TReactEditableFieldOnSave, formInitialValues: any,
-    onCancel: TReactEditableFieldOnCancel, formValidationSchema?: any
+    onCancel: TReactEditableFieldOnCancel, formHtmlProps: React.HTMLAttributes<Element>, formValidationSchema?: any
   }> = p => {
     const formikProps = React.useMemo((): FormikConfig<any> => ({
       initialValues: p.formInitialValues,
@@ -31,16 +31,16 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
     }), [ p.formInitialValues, p.formValidationSchema, p.onSave ])
   
     const renderForm = React.useCallback((f: FormikProps<any>) => (
-      <div>
+      <div {...p.formHtmlProps}>
         {p.renderContent(f)}
         {renderers.renderFormButtons(f, p.onCancel)}
       </div>
-    ), [ p.renderContent, p.onCancel ])
+    ), [ p.renderContent, p.onCancel, p.formHtmlProps ])
   
     return React.useMemo(() => <Formik {...formikProps}>{renderForm}</Formik>, [ formikProps, renderForm ])
   }
 
-  return ({ renderContent, renderFormContent, onSave, formInitialValues, onCancel, formValidationSchema, ...htmlProps }: TEditableProps) => {
+  return ({ renderContent, renderFormContent, onSave, formInitialValues, onCancel, formValidationSchema, ...formHtmlProps }: TEditableProps) => {
     const [ isEditing, setIsEditing ] = React.useState(false)
   
     const onEdit = React.useCallback((e: React.MouseEvent) => {
@@ -66,13 +66,14 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
     }, [ onSave ])
   
     return (
-      <div {...htmlProps}>
+      <div>
         {(isEditing)
           ? renderers.renderFormWrapper(
             true,
             <PrivateFormContent
               renderContent={renderFormContent} onSave={onFieldSave} onCancel={onEditCancel}
               formInitialValues={formInitialValues} formValidationSchema={formValidationSchema}
+              formHtmlProps={formHtmlProps}
             />
           )
           : renderers.renderFormWrapper(false)
