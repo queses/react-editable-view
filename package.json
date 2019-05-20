@@ -1,6 +1,6 @@
 {
   "name": "react-editable-view",
-  "version": "1.1.9",
+  "version": "1.2.1",
   "main": "dist/index",
   "author": "Max Kobozev <quesesr@gmail.com>",
   "license": "MIT",
@@ -22,8 +22,8 @@
   },
   "peerDependencies": {
     "formik": "^1.0.0",
-    "react": "^16.0.0",
-    "yup": "^0.0.0"
+    "react": "^16.8.0",
+    "yup": "^0.26.0"
   },
   "devDependencies": {
     "@types/react": "^16.8.17",

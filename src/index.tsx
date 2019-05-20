@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { TEvergreenEditableFormContent, TEvergreenEditableOnSave, TEvergreenEditableOnCancel, TEvergreenEditableContent, TReactEditableBuilder, TEditableProps } from '../types/types';
-import { Formik, FormikConfig, FormikProps } from 'formik';
+import { TReactEditableFieldFormContent, TReactEditableFieldOnSave, TReactEditableFieldOnCancel, TReactEditableFieldContent, TReactEditableBuilder, TEditableProps } from '../types/types';
+import { Formik, FormikConfig, FormikProps, FormikActions } from 'formik';
 
 const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) => {
   const PrivateContent: React.FC<{
-    renderContent: TEvergreenEditableContent, onEdit: Function
+    renderContent: TReactEditableFieldContent, onEdit: Function
   }> = p => {
     return React.useMemo(() => (
       <React.Fragment>
@@ -15,15 +15,15 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
   }
 
   const PrivateFormContent: React.FC<{
-    renderContent: TEvergreenEditableFormContent, onSave: TEvergreenEditableOnSave, formInitialValues: any,
-    onCancel: TEvergreenEditableOnCancel, formValidationSchema?: any
+    renderContent: TReactEditableFieldFormContent, onSave: TReactEditableFieldOnSave, formInitialValues: any,
+    onCancel: TReactEditableFieldOnCancel, formValidationSchema?: any
   }> = p => {
     const formikProps = React.useMemo((): FormikConfig<any> => ({
       initialValues: p.formInitialValues,
       validationSchema: p.formValidationSchema,
       onSubmit: async (values, actions) => {
         try {
-          await p.onSave(values)
+          await p.onSave(values, actions)
         } finally {
           actions.setSubmitting(false)
         }
@@ -40,7 +40,7 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
     return React.useMemo(() => <Formik {...formikProps}>{renderForm}</Formik>, [ formikProps, renderForm ])
   }
 
-  return (p: TEditableProps) => {
+  return ({ renderContent, renderFormContent, onSave, formInitialValues, onCancel, formValidationSchema, ...htmlProps }: TEditableProps) => {
     const [ isEditing, setIsEditing ] = React.useState(false)
   
     const onEdit = React.useCallback((e: React.MouseEvent) => {
@@ -48,40 +48,40 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
       setIsEditing(true)
     }, [])
   
-    const onCancel = React.useCallback(() => {
-      if (typeof p.onCancel === 'function') {
-        p.onCancel()
+    const onEditCancel = React.useCallback(() => {
+      if (typeof onCancel === 'function') {
+        onCancel()
       }
   
       setIsEditing(false)
-    }, [ p.onCancel ])
+    }, [ onCancel ])
 
-    const onSave = React.useCallback(async (values: any) => {
-      if (typeof p.onSave !== 'function') {
+    const onFieldSave = React.useCallback(async (values: any, actions: FormikActions<any>) => {
+      if (typeof onSave !== 'function') {
         console.error('ReactEditableEase "onSave" proprety should be a function')
       } else {
-        await p.onSave(values)
+        await onSave(values, actions)
         setIsEditing(false)
       }
-    }, [ p.onSave ])
+    }, [ onSave ])
   
     return (
-      <React.Fragment>
+      <div {...htmlProps}>
         {(isEditing)
           ? renderers.renderFormWrapper(
             true,
             <PrivateFormContent
-              renderContent={p.renderFormContent} onSave={onSave} onCancel={onCancel}
-              formInitialValues={p.formInitialValues} formValidationSchema={p.formValidationSchema}
+              renderContent={renderFormContent} onSave={onFieldSave} onCancel={onEditCancel}
+              formInitialValues={formInitialValues} formValidationSchema={formValidationSchema}
             />
           )
           : renderers.renderFormWrapper(false)
         }
 
         {!(options.toHideContentOnEdit && isEditing) && renderers.renderContentWrapper(
-          <PrivateContent renderContent={p.renderContent} onEdit={onEdit} />
+          <PrivateContent renderContent={renderContent} onEdit={onEdit} />
         )}
-      </React.Fragment>
+      </div>
     )
   }
 }

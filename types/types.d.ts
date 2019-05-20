@@ -2,19 +2,19 @@ import { FormikActions, FormikProps } from 'formik'
 import { CSSProperties } from 'react';
 import * as Yup from 'yup'
 
-export type TEvergreenEditableContent <V = any> = () => JSX.Element
-export type TEvergreenEditableFormContent <V = any> = (f: FormikProps<V>) => JSX.Element
-export type TEvergreenEditableOnSave <V = any> = (values: V) => void | Promise<void>
-export type TEvergreenEditableOnCancel = () => void
+export type TReactEditableFieldContent <V = any> = () => JSX.Element
+export type TReactEditableFieldFormContent <V = any> = (fp: FormikProps<V>) => JSX.Element
+export type TReactEditableFieldOnSave <V = any> = (values: V, fa: FormikActions<V>) => void | Promise<void>
+export type TReactEditableFieldOnCancel = () => void
 
 export type TEditableProps <V extends object = any> = {
-  renderContent: TEvergreenEditableContent
-  renderFormContent: TEvergreenEditableFormContent<V>,
-  onSave: TEvergreenEditableOnSave
+  renderContent: TReactEditableFieldContent
+  renderFormContent: TReactEditableFieldFormContent<V>,
+  onSave: TReactEditableFieldOnSave
   formInitialValues: V
-  onCancel?: TEvergreenEditableOnCancel
+  onCancel?: TReactEditableFieldOnCancel
   formValidationSchema?: Yup.ObjectSchema<V>
-}
+} & React.HTMLAttributes<Element>
 
 export type TReactEditableBuilder <V = any> = (
   renderers: TReactEditableBuilderComponents,
@@ -33,6 +33,6 @@ export type TReactEditableBuilderOptions = {
 }
 
 export type TReactEditableRenderEditButton = (onEdit: Function) => JSX.Element
-export type TReactEditableRenderFormButtons <V = any> = (f: FormikProps<V>, onCancel: TEvergreenEditableOnCancel) => JSX.Element
+export type TReactEditableRenderFormButtons <V = any> = (fp: FormikProps<V>, onCancel: TReactEditableFieldOnCancel) => JSX.Element
 export type TReactEditableRenderFormWrapper = (toShow: boolean, children?: JSX.Element) => JSX.Element
 export type TReactEditableRenderContentWrapper = (children: JSX.Element) => JSX.Element
