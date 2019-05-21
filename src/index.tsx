@@ -16,7 +16,7 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
 
   const PrivateFormContent: React.FC<{
     renderContent: TReactEditableFieldFormContent, onSave: TReactEditableFieldOnSave, formInitialValues: any,
-    onCancel: TReactEditableFieldOnCancel, formHtmlProps: React.HTMLAttributes<Element>, formValidationSchema?: any
+    onCancel: TReactEditableFieldOnCancel, formValidationSchema?: any
   }> = p => {
     const formikProps = React.useMemo((): FormikConfig<any> => ({
       initialValues: p.formInitialValues,
@@ -31,11 +31,11 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
     }), [ p.formInitialValues, p.formValidationSchema, p.onSave ])
   
     const renderForm = React.useCallback((f: FormikProps<any>) => (
-      <div {...p.formHtmlProps}>
+      <React.Fragment>
         {p.renderContent(f)}
         {renderers.renderFormButtons(f, p.onCancel)}
-      </div>
-    ), [ p.renderContent, p.onCancel, p.formHtmlProps ])
+      </React.Fragment>
+    ), [ p.renderContent, p.onCancel ])
   
     return React.useMemo(() => <Formik {...formikProps}>{renderForm}</Formik>, [ formikProps, renderForm ])
   }
@@ -69,14 +69,14 @@ const ReactEditableBuilder: TReactEditableBuilder = (renderers, options = {}) =>
       <div>
         {(isEditing)
           ? renderers.renderFormWrapper(
-            true,
-            <PrivateFormContent
-              renderContent={renderFormContent} onSave={onFieldSave} onCancel={onEditCancel}
-              formInitialValues={formInitialValues} formValidationSchema={formValidationSchema}
-              formHtmlProps={formHtmlProps}
-            />
-          )
-          : renderers.renderFormWrapper(false)
+              true,
+              formHtmlProps,
+              <PrivateFormContent
+                renderContent={renderFormContent} onSave={onFieldSave} onCancel={onEditCancel}
+                formInitialValues={formInitialValues} formValidationSchema={formValidationSchema}
+              />
+            )
+          : renderers.renderFormWrapper(false, formHtmlProps)
         }
 
         {!(options.toHideContentOnEdit && isEditing) && renderers.renderContentWrapper(

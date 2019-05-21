@@ -1,7 +1,8 @@
 {
   "name": "react-editable-view",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "main": "dist/index",
+  "types": "dist/index.d.ts",
   "author": "Max Kobozev <quesesr@gmail.com>",
   "license": "MIT",
   "repository": "queses/react-editable-view",
@@ -16,7 +17,11 @@
   ],
   "scripts": {
     "build": "npm-run-all clear tsc minify",
+    "build-pack": "npm-run-all build npm:pack",
+    "watch": "npm-run-all clear tsc-watch",
     "tsc": "tsc",
+    "npm:pack": "npm pack",
+    "tsc-watch": "tsc --watch",
     "minify": "uglifyjs --compress --mangle --source-map \"filename='dist/**.js'\"  --output dist/index.min.js dist/**.js",
     "clear": "rimraf dist"
   },
